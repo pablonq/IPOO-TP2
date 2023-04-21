@@ -1,18 +1,18 @@
 <?php
-class viaje{
+class viajes{
     private $codigo;
     private $destino;
     private $cantPasajeros;
-    private $pasajerosViaje=[];
-    private $responsableV=[];
+    private $objPasajero;
+    private $objResponsable;
 
-public function __construct($codigo,$destino,$cantPasajeros,$pasajerosViaje, $responsableV)
+public function __construct($codigo,$destino,$cantPasajeros,$objPasajero, $objResponsable)
 {
     $this->codigo=$codigo;
     $this->destino=$destino;
     $this->cantPasajeros=$cantPasajeros;
-    $this->responsableV=$responsableV;
-    $this->pasajerosViaje=$pasajerosViaje;
+    $this->objPasajero=$objPasajero;
+    $this->objResponsable=$objResponsable;
     
     
 }    
@@ -34,75 +34,113 @@ public function getCantPasajeros(){
 public function setCantPasajeros($cantPasajeros){
     $this->cantPasajeros=$cantPasajeros;
 }
-public function getPasajerosViaje(){
-    return $this->pasajerosViaje;
+public function getPasajeros(){
+    return $this->objPasajero;
 }
-public function setPasajerosViaje($pasajerosViaje){
-    $this->pasajerosViaje=$pasajerosViaje;
-
+public function setPasajeros($objPasajero){
+    $this->objPasajero=$objPasajero;
 }
-public function getResponsableV(){
-    return $this->responsableV;
+public function getResponsable(){
+    return $this->objResponsable;
 }
-public function setResponsableV($responsableV){
-    $this->responsableV=$responsableV;
+public function setResponsable($objResponsable){
+    $this->objResponsable=$objResponsable;
 }
-
 public function __toString()
 {
-    return "El codigo del viaje es: ".$this->getCodigo()."\n"."El destino es: ".$this->getDestino()."\n"."La cantidad de pasajeros es: ".$this->getCantPasajeros();
+    return "El codigo del viaje es: ".$this->getCodigo()."\n".
+    "El destino es: ".$this->getDestino()."\n"
+    ."La cantidad de pasajeros es: ".$this->getCantPasajeros()."\n".
+    "Los pasajeros son: ".$this->mostrarPasajeros()."\n".
+    "El responsable es: ".$this->getResponsable();
 
 }
+public function mostrarPasajeros(){
+    $pasajeros="";
+    $colPasajeros=$this->getPasajeros();
+    for($i=0;$i<count($colPasajeros);$i++){
+        
+        $pasajeros=$pasajeros.$colPasajeros[$i];
+    }
+    return $pasajeros;
+
+}
+
 public function agregarPasajero($pasajero){
-    
-    $arrayNuevo = $this->getPasajerosViaje();
-    array_push($arrayNuevo, $pasajero);
-    $this->setPasajerosViaje($arrayNuevo);
+    $colPasajeros=$this->getPasajeros();
+    $exito=false;
+    $i=0;
+    while($i<count($colPasajeros)&&!$exito){
+        $objPasajeros=$colPasajeros[$i];
+        if($objPasajeros->getApellido()==$pasajero->getApellido()){
+            $exito=true;
+        }
+        $i++;
+
+    }
+    if(!$exito){
+        $colPasajeros[]=$pasajero;
+        $this->setPasajeros($colPasajeros);
+        $mje="Pasajero agregado con exito";
+    }
+    else{
+        $mje="El pasajero ya se encuentra en la lista";
+    }
+return $mje;
 
     
-    return $this->getPasajerosViaje();
+   
 }
 public function quitarPasajero($pasajero){
-    
-    $arregloPasajeros=$this->getPasajerosViaje();
-    $n=count($arregloPasajeros);
-
-    for($i=0;$i<$n;$i++){
-        if($pasajero==$arregloPasajeros[$i]["dni"]){
-            array_splice($arregloPasajeros,$i,1);
-            $this->setPasajerosViaje($arregloPasajeros);
-            
+    $colPasajeros=$this->getPasajeros();
+    $exito=false;
+    $i=0;
+    while($i<count($colPasajeros)&&!$exito){
+        $objPasajeros=$colPasajeros[$i];
+        if($objPasajeros->getDni()==$pasajero->getDni()){
+            $exito=true;
+            array_splice($colPasajeros,$i,1);
+            $this->setPasajeros($colPasajeros);
         }
+        $i++;
+
     }
-    return $arregloPasajeros;
+    return $this->getPasajeros();
+    
+
+    
+   
 }
 public function modificarDatosPasajero($pasajero, $pasajero2){
-    $arregloPasajeros=$this->getPasajerosViaje();
-    $n=count($arregloPasajeros);
-    for($i=0;$i<$n;$i++){
-        if($pasajero==$arregloPasajeros[$i]["dni"]){
-            array_splice($arregloPasajeros,$i,1);
-            array_push($arregloPasajeros,$pasajero2);
-            $this->setPasajerosViaje($arregloPasajeros);
-            print_r($arregloPasajeros);
+    $colPasajeros=$this->getPasajeros();
+    $exito=false;
+    $i=0;
+    while($i<count($colPasajeros)&&!$exito){
+        $objPasajeros=$colPasajeros[$i];
+        if($objPasajeros->getDni()==$pasajero->getDni()){
+            $exito=true;
+            array_splice($colPasajeros,$i,1);
+            $colPasajeros[]=$pasajero2;
+            $this->setPasajeros($colPasajeros);
         }
-    }
-    return $arregloPasajeros;
+        $i++;
+}
+return $this->getPasajeros();
 
 }
-/*Modificar la clase Viaje para que ahora los pasajeros sean un objeto que tenga los atributos nombre, apellido,
- numero de documento y teléfono. El viaje ahora contiene una referencia a una colección de objetos de la clase Pasajero.
- También se desea guardar la información de la persona responsable de realizar el viaje, para ello cree una clase ResponsableV 
- que registre el número de empleado, número de licencia, nombre y apellido. La clase Viaje debe hacer referencia al responsable 
- de realizar el viaje.
+public function cambiarCodigo($codigo){
+    $this->setCodigo($codigo);
 
-Volver a implementar las operaciones que permiten modificar el nombre, apellido y teléfono de un pasajero. 
-Luego implementar la operación que agrega los pasajeros al viaje, solicitando por consola la información de los mismos. 
-Se debe verificar que el pasajero no este cargado mas de una vez en el viaje. De la misma forma cargue la información del 
-responsable del viaje.*/ 
-
-
-
-
-
+    return $this->getCodigo();
+    
+}
+public function cambiarDestino($destino){
+    $this->setDestino($destino);
+    return $this->getDestino();
+    
+}
+function cantPasajeros($nuevoCantPasajeros){
+    $this->setCantPasajeros($nuevoCantPasajeros);
+    return $this->getCantPasajeros();
+}
 }
